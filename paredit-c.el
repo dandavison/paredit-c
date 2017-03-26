@@ -20,6 +20,7 @@
              '((lambda (&rest args) nil)))
         (local-set-key "{" 'paredit-open-curly)
         (local-set-key "'" 'paredit-c/singlequote)
+        (local-set-key "\"" 'paredit-c/doublequote)
         (local-set-key ";" 'self-insert-command)
         (local-set-key "\M-q" 'fill-paragraph)
         (when (eq major-mode 'python-mode)
@@ -44,10 +45,10 @@
          'paredit-backward-delete))
     (error (call-interactively 'delete-backward-char))))
 
-(defun paredit-c/singlequote (&optional n)
+(defun paredit-c/paredit-singlequote (&optional n)
   "Copied from `paredit-doublequote'"
   (interactive "P")
-  
+
   (if (null paredit-mode) (insert "'")
     (cond ((paredit-in-string-p)
            (if (eq (cdr (paredit-string-start+end-points))
@@ -58,5 +59,15 @@
            (insert ?\' ))
           ((not (paredit-in-char-p))
            (paredit-insert-pair n ?\' ?\' 'paredit-forward-for-quote)))))
+
+(defun paredit-c/doublequote (&optional arg)
+  (interactive "P")
+  (if (equal arg '(4)) (self-insert-command 1)
+    (paredit-doublequote arg)))
+
+(defun paredit-c/singlequote (&optional arg)
+  (interactive "P")
+  (if (equal arg '(4)) (self-insert-command 1)
+    (paredit-c/paredit-singlequote arg)))
 
 (provide 'paredit-c)
